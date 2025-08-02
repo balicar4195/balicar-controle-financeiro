@@ -243,7 +243,7 @@ elif menu == "Agenda":
             return
         st.markdown(f"### {titulo}")
         for i in lista.index:
-            concluida = st.checkbox(f"{lista.loc[i, 'Tarefa']} ({lista.loc[i, 'Data'].strftime('%d/%m/%Y')})", value=lista.loc[i, 'Concluida'], key=f"check_{i}")
+            concluida = st.checkbox(f"{lista.loc[i, 'Tarefa']} ({pd.to_datetime(lista.loc[i, 'Data']).strftime('%d/%m/%Y')})", value=lista.loc[i, 'Concluida'], key=f"check_{i}")
             if concluida != lista.loc[i, 'Concluida']:
                 st.session_state["tarefas"].loc[i, "Concluida"] = concluida
                 salvar_csv(st.session_state["tarefas"], CSV_TAREFAS)
