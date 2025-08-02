@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
 import hashlib
+import os
 
 st.set_page_config(page_title="BALICAR - Controle Financeiro", layout="wide")
 
@@ -32,12 +33,29 @@ if not st.session_state['logged_in']:
     login()
     st.stop()
 
+# ------------------------
+# Funções de persistência
+# ------------------------
+CSV_PATH = "dados_financeiros.csv"
+
+def carregar_dados():
+    if os.path.exists(CSV_PATH):
+        return pd.read_csv(CSV_PATH, parse_dates=["Data"])
+    else:
+        return pd.DataFrame(columns=["Data", "Tipo", "Categoria", "Descrição", "Valor"])
+
+def salvar_dados(df):
+    df.to_csv(CSV_PATH, index=False)
+
+# ------------------------
+# Inicialização
+# ------------------------
 st.sidebar.success("Logado como: " + st.session_state['user'])
 st.sidebar.title("📚 Menu")
 menu = st.sidebar.radio("Navegar para:", ["Lançamentos", "Relatórios"])
 
 if "dados" not in st.session_state:
-    st.session_state["dados"] = pd.DataFrame(columns=["Data", "Tipo", "Categoria", "Descrição", "Valor"])
+    st.session_state["dados"] = carregar_dados()
 
 if "edit_index" not in st.session_state:
     st.session_state["edit_index"] = None
@@ -51,13 +69,12 @@ if "delete_index" not in st.session_state:
 if menu == "Lançamentos":
     st.title("💰 Lançamentos Financeiros")
 
-    # Se clicou para excluir, exclui aqui
     if st.session_state["delete_index"] is not None:
         st.session_state["dados"] = st.session_state["dados"].drop(st.session_state["delete_index"]).reset_index(drop=True)
+        salvar_dados(st.session_state["dados"])
         st.success("Lançamento excluído com sucesso.")
         st.session_state["delete_index"] = None
 
-    # Se clicou em editar, carrega o formulário
     if st.session_state["edit_index"] is None:
         with st.form("form_lancamento"):
             col1, col2 = st.columns(2)
@@ -74,6 +91,7 @@ if menu == "Lançamentos":
                 novo = pd.DataFrame([[data, tipo, categoria, descricao, valor]],
                                     columns=["Data", "Tipo", "Categoria", "Descrição", "Valor"])
                 st.session_state["dados"] = pd.concat([st.session_state["dados"], novo], ignore_index=True)
+                salvar_dados(st.session_state["dados"])
                 st.success("Lançamento adicionado com sucesso!")
     else:
         st.subheader("✏️ Editar Lançamento")
@@ -93,6 +111,7 @@ if menu == "Lançamentos":
 
             if atualizar:
                 st.session_state["dados"].loc[st.session_state["edit_index"]] = [data, tipo, categoria, descricao, valor]
+                salvar_dados(st.session_state["dados"])
                 st.success("Lançamento atualizado com sucesso!")
                 st.session_state["edit_index"] = None
 
@@ -137,6 +156,7 @@ elif menu == "Relatórios":
         despesas = dados[dados["Tipo"] == "Despesa"]
         if not despesas.empty:
             categoria_data = despesas.groupby("Categoria")["Valor"].sum()
+            import matplotlib.pyplot as plt
             fig, ax = plt.subplots()
             ax.pie(categoria_data, labels=categoria_data.index, autopct='%1.1f%%', startangle=90)
             ax.axis('equal')
