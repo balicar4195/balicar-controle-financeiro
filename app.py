@@ -47,7 +47,7 @@ def carregar_csv(caminho, colunas, parse_data=None):
     else:
         return pd.DataFrame(columns=colunas)
 
-def salvar_csv(df, caminho):
+    def salvar_csv(df, caminho):
     df.to_csv(caminho, index=False)
 
 # ------------------------
@@ -81,8 +81,8 @@ if menu == "Lançamentos":
 
     if st.session_state["delete_index"] is not None:
         st.session_state["dados"] = st.session_state["dados"].drop(st.session_state["delete_index"]).reset_index(drop=True)
-        salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
-        st.success("Lançamento excluído com sucesso.")
+            salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
+            st.success("Lançamento excluído com sucesso.")
         st.session_state["delete_index"] = None
 
     if st.session_state["edit_index"] is None:
@@ -101,8 +101,8 @@ if menu == "Lançamentos":
                 novo = pd.DataFrame([[data, tipo, categoria, descricao, valor]],
                                     columns=["Data", "Tipo", "Categoria", "Descrição", "Valor"])
                 st.session_state["dados"] = pd.concat([st.session_state["dados"], novo], ignore_index=True)
-                salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
-                st.success("Lançamento adicionado com sucesso!")
+                    salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
+                    st.success("Lançamento adicionado com sucesso!")
     else:
         st.subheader("✏️ Editar Lançamento")
         dados = st.session_state["dados"]
@@ -121,8 +121,8 @@ if menu == "Lançamentos":
 
             if atualizar:
                 st.session_state["dados"].loc[st.session_state["edit_index"]] = [data, tipo, categoria, descricao, valor]
-                salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
-                st.success("Lançamento atualizado com sucesso!")
+                    salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
+                    st.success("Lançamento atualizado com sucesso!")
                 st.session_state["edit_index"] = None
 
     st.subheader("📄 Lista de Lançamentos")
@@ -213,8 +213,8 @@ elif menu == "Agenda":
                     hoje_lanc = lanc.copy()
                     hoje_lanc["Data"] = hoje
                     st.session_state["dados"] = pd.concat([st.session_state["dados"], pd.DataFrame([hoje_lanc])], ignore_index=True)
-                    salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
-                    st.success("Lançamento movido para hoje.")
+                        salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
+                        st.success("Lançamento movido para hoje.")
 
     mostrar_lista(vencidas, "Atrasadas", "red")
     mostrar_lista(vencem_hoje, "Vencem Hoje", "orange")
@@ -233,8 +233,8 @@ elif menu == "Agenda":
         if adicionar_tarefa and tarefa:
             nova_tarefa = pd.DataFrame([[data_tarefa, tarefa, False]], columns=["Data", "Tarefa", "Concluida"])
             st.session_state["tarefas"] = pd.concat([st.session_state["tarefas"], nova_tarefa], ignore_index=True)
-            salvar_csv(st.session_state["tarefas"], CSV_TAREFAS)
-            st.success("Tarefa adicionada com sucesso!")
+                salvar_csv(st.session_state["tarefas"], CSV_TAREFAS)
+                st.success("Tarefa adicionada com sucesso!")
 
     tarefas_hoje = st.session_state["tarefas"][pd.to_datetime(st.session_state["tarefas"]["Data"]) == hoje]
     tarefas_futuras = st.session_state["tarefas"][pd.to_datetime(st.session_state["tarefas"]["Data"]) > hoje]
@@ -247,7 +247,7 @@ elif menu == "Agenda":
             concluida = st.checkbox(f"{lista.loc[i, 'Tarefa']} ({pd.to_datetime(lista.loc[i, 'Data']).strftime('%d/%m/%Y')})", value=lista.loc[i, 'Concluida'], key=f"check_{i}")
             if concluida != lista.loc[i, 'Concluida']:
                 st.session_state["tarefas"].loc[i, "Concluida"] = concluida
-                salvar_csv(st.session_state["tarefas"], CSV_TAREFAS)
+                    salvar_csv(st.session_state["tarefas"], CSV_TAREFAS)
 
     exibir_tarefas(tarefas_hoje, "Tarefas do Dia")
     exibir_tarefas(tarefas_futuras, "Tarefas Futuras")
@@ -269,21 +269,21 @@ elif menu == "Contas":
         if adicionar and nome_conta:
             nova = pd.DataFrame([[nome_conta, saldo_inicial]], columns=["Conta", "Saldo"])
             st.session_state["contas"] = pd.concat([st.session_state["contas"], nova], ignore_index=True)
-            salvar_csv(st.session_state["contas"], CSV_CONTAS)
-            st.success("Conta adicionada com sucesso!")
+                salvar_csv(st.session_state["contas"], CSV_CONTAS)
+                st.success("Conta adicionada com sucesso!")
 
     st.subheader("💳 Contas Cadastradas")
     if not st.session_state["contas"].empty:
 
-    st.subheader("✏️ Editar Saldo das Contas")
-    for i in st.session_state["contas"].index:
-        conta = st.session_state["contas"].loc[i, "Conta"]
-        saldo = st.session_state["contas"].loc[i, "Saldo"]
-        novo_saldo = st.number_input(f"Saldo de {conta}", value=saldo, key=f"saldo_{i}")
-        if novo_saldo != saldo:
-            st.session_state["contas"].loc[i, "Saldo"] = novo_saldo
-    salvar_csv(st.session_state["contas"], CSV_CONTAS)
-    st.success("Saldos atualizados com sucesso!")
+        st.subheader("✏️ Editar Saldo das Contas")
+        for i in st.session_state["contas"].index:
+                conta = st.session_state["contas"].loc[i, "Conta"]
+                saldo = st.session_state["contas"].loc[i, "Saldo"]
+                novo_saldo = st.number_input(f"Saldo de {conta}", value=saldo, key=f"saldo_{i}")
+                if novo_saldo != saldo:
+                        st.session_state["contas"].loc[i, "Saldo"] = novo_saldo
+        salvar_csv(st.session_state["contas"], CSV_CONTAS)
+        st.success("Saldos atualizados com sucesso!")
 
         st.dataframe(st.session_state["contas"], use_container_width=True)
     else:
