@@ -5,18 +5,26 @@ from datetime import datetime
 
 st.set_page_config(page_title="BALICAR - Controle Financeiro", layout="wide")
 
-# Estilo de cores baseado na logo (preto, branco, amarelo)
+# Estilo mais claro e com fontes maiores
 st.markdown("""
     <style>
-        body {
-            background-color: #000000;
-            color: #FFFFFF;
+        body, .stApp {
+            background-color: #f9f9f9;
+            color: #111111;
         }
-        .stApp {
-            background-color: #000000;
+        h1, h2, h3, h4, h5, h6 {
+            font-size: 28px !important;
+            color: #000000;
         }
-        .css-1d391kg, .css-1v3fvcr {
-            color: #FFFFFF;
+        .stTextInput > label, .stSelectbox > label, .stDateInput > label,
+        .stNumberInput > label, .stMultiSelect > label {
+            font-size: 18px !important;
+        }
+        .stButton > button {
+            font-size: 18px !important;
+        }
+        .stMarkdown {
+            font-size: 18px !important;
         }
     </style>
 """, unsafe_allow_html=True)
