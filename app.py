@@ -274,6 +274,17 @@ elif menu == "Contas":
 
     st.subheader("💳 Contas Cadastradas")
     if not st.session_state["contas"].empty:
+
+    st.subheader("✏️ Editar Saldo das Contas")
+    for i in st.session_state["contas"].index:
+        conta = st.session_state["contas"].loc[i, "Conta"]
+        saldo = st.session_state["contas"].loc[i, "Saldo"]
+        novo_saldo = st.number_input(f"Saldo de {conta}", value=saldo, key=f"saldo_{i}")
+        if novo_saldo != saldo:
+            st.session_state["contas"].loc[i, "Saldo"] = novo_saldo
+    salvar_csv(st.session_state["contas"], CSV_CONTAS)
+    st.success("Saldos atualizados com sucesso!")
+
         st.dataframe(st.session_state["contas"], use_container_width=True)
     else:
         st.info("Nenhuma conta cadastrada.")
