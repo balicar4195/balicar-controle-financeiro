@@ -138,44 +138,57 @@ if menu == "Lançamentos":
 # ------------------------
 # Aba: Relatórios
 # ------------------------
-elif menu == "Relatórios":
     st.title("📊 Relatórios Financeiros")
 
     dados = st.session_state["dados"]
+    contas = st.session_state["contas"]
     if dados.empty:
         st.info("Nenhum dado disponível.")
     else:
         dados["Data"] = pd.to_datetime(dados["Data"])
         dados["AnoMes"] = dados["Data"].dt.to_period("M").astype(str)
 
-        col1, col2, col3 = st.columns(3)
-        total_receitas = dados[dados["Tipo"] == "Receita"]["Valor"].sum()
-        total_despesas = dados[dados["Tipo"] == "Despesa"]["Valor"].sum()
-        saldo = total_receitas - total_despesas
+        meses = sorted(dados["AnoMes"].unique())
+        categorias = sorted(dados["Categoria"].unique())
 
-        col1.metric("Total de Receitas", f"R$ {total_receitas:,.2f}")
-        col2.metric("Total de Despesas", f"R$ {total_despesas:,.2f}")
-        col3.metric("Saldo", f"R$ {saldo:,.2f}")
+        filtro_mes = st.selectbox("📅 Filtrar por Mês", ["Todos"] + meses)
+        filtro_categoria = st.selectbox("📂 Filtrar por Categoria", ["Todas"] + categorias)
 
-        st.subheader("📅 Receitas e Despesas por Mês")
-        resumo = dados.groupby(["AnoMes", "Tipo"])["Valor"].sum().unstack().fillna(0)
-        st.bar_chart(resumo)
+        dados_filtrados = dados.copy()
+        if filtro_mes != "Todos":
+            dados_filtrados = dados_filtrados[dados_filtrados["AnoMes"] == filtro_mes]
+        if filtro_categoria != "Todas":
+            dados_filtrados = dados_filtrados[dados_filtrados["Categoria"] == filtro_categoria]
 
-        st.subheader("📂 Despesas por Categoria")
-        despesas = dados[dados["Tipo"] == "Despesa"]
+        total_receitas = dados_filtrados[dados_filtrados["Tipo"] == "Receita"]["Valor"].sum()
+        total_despesas = dados_filtrados[dados_filtrados["Tipo"] == "Despesa"]["Valor"].sum()
+        saldo_lancamentos = total_receitas - total_despesas
+
+        saldo_contas = contas["Saldo"].sum() if not contas.empty else 0
+        saldo_total = saldo_contas + saldo_lancamentos
+
+        col1, col2, col3, col4 = st.columns(4)
+        col1.metric("Receitas", f"R$ {total_receitas:,.2f}")
+        col2.metric("Despesas", f"R$ {total_despesas:,.2f}")
+        col3.metric("Saldo (Lançamentos)", f"R$ {saldo_lancamentos:,.2f}")
+        col4.metric("Saldo Total (Contas + Receitas)", f"R$ {saldo_total:,.2f}")
+
+        st.subheader("📊 Gráfico por Mês")
+        resumo = dados_filtrados.groupby(["AnoMes", "Tipo"])["Valor"].sum().unstack().fillna(0)
+        if not resumo.empty:
+            st.bar_chart(resumo)
+
+        st.subheader("🥧 Despesas por Categoria")
+        despesas = dados_filtrados[dados_filtrados["Tipo"] == "Despesa"]
         if not despesas.empty:
             categoria_data = despesas.groupby("Categoria")["Valor"].sum()
+            import matplotlib.pyplot as plt
             fig, ax = plt.subplots()
             ax.pie(categoria_data, labels=categoria_data.index, autopct='%1.1f%%', startangle=90)
             ax.axis('equal')
             st.pyplot(fig)
         else:
-            st.info("Ainda não há despesas para exibir o gráfico.")
-
-
-# ------------------------
-# Aba: Agenda (Contas Futuras e Tarefas)
-# ------------------------
+            st.info("Nenhuma despesa para exibir no gráfico.")
 elif menu == "Agenda":
     st.title("📅 Agenda: Contas Futuras e Tarefas")
     dados = st.session_state["dados"]
