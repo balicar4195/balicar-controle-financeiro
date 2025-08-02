@@ -39,9 +39,11 @@ menu = st.sidebar.radio("Navegar para:", ["Lançamentos", "Relatórios"])
 if "dados" not in st.session_state:
     st.session_state["dados"] = pd.DataFrame(columns=["Data", "Tipo", "Categoria", "Descrição", "Valor"])
 
-# Variável para controlar a edição
 if "edit_index" not in st.session_state:
     st.session_state["edit_index"] = None
+
+if "delete_index" not in st.session_state:
+    st.session_state["delete_index"] = None
 
 # ------------------------
 # Página de Lançamentos
@@ -49,6 +51,13 @@ if "edit_index" not in st.session_state:
 if menu == "Lançamentos":
     st.title("💰 Lançamentos Financeiros")
 
+    # Se clicou para excluir, exclui aqui
+    if st.session_state["delete_index"] is not None:
+        st.session_state["dados"] = st.session_state["dados"].drop(st.session_state["delete_index"]).reset_index(drop=True)
+        st.success("Lançamento excluído com sucesso.")
+        st.session_state["delete_index"] = None
+
+    # Se clicou em editar, carrega o formulário
     if st.session_state["edit_index"] is None:
         with st.form("form_lancamento"):
             col1, col2 = st.columns(2)
@@ -94,10 +103,9 @@ if menu == "Lançamentos":
         col1.write(f"{dados.loc[i, 'Data']} | {dados.loc[i, 'Tipo']} | {dados.loc[i, 'Categoria']} | {dados.loc[i, 'Descrição']} | R$ {dados.loc[i, 'Valor']:.2f}")
         if col2.button("✏️", key=f"edit_{i}"):
             st.session_state["edit_index"] = i
-            st.experimental_rerun()
         if col3.button("🗑️", key=f"del_{i}"):
-            st.session_state["dados"] = dados.drop(i).reset_index(drop=True)
-            st.experimental_rerun()
+            st.session_state["delete_index"] = i
+        st.write("---")
 
 # ------------------------
 # Página de Relatórios
