@@ -5,6 +5,24 @@ from datetime import datetime
 
 st.set_page_config(page_title="BALICAR - Controle Financeiro", layout="wide")
 
+# Estilo de cores baseado na logo (preto, branco, amarelo)
+st.markdown("""
+    <style>
+        body {
+            background-color: #000000;
+            color: #FFFFFF;
+        }
+        .stApp {
+            background-color: #000000;
+        }
+        .css-1d391kg, .css-1v3fvcr {
+            color: #FFFFFF;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# Logo no topo
+st.image("logo.png", width=300)
 st.title("💼 BALICAR - Sistema de Controle Financeiro")
 
 # Sessão de dados
