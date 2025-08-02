@@ -47,7 +47,7 @@ def carregar_csv(caminho, colunas, parse_data=None):
     else:
         return pd.DataFrame(columns=colunas)
 
-    def salvar_csv(df, caminho):
+def salvar_csv(df, caminho):
     df.to_csv(caminho, index=False)
 
 # ------------------------
