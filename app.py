@@ -23,7 +23,7 @@ def login():
         if username in users and users[username] == hashlib.sha256(password.encode()).hexdigest():
             st.session_state['logged_in'] = True
             st.session_state['user'] = username
-        else:
+if st.session_state.get("editando", False):
             st.sidebar.error("Usuário ou senha incorretos.")
 
 if 'logged_in' not in st.session_state:
@@ -43,7 +43,7 @@ CSV_TAREFAS = "tarefas.csv"
 def carregar_csv(caminho, colunas, parse_data=None):
     if os.path.exists(caminho):
         return pd.read_csv(caminho, parse_dates=parse_data)
-    else:
+if st.session_state.get("editando", False):
         return pd.DataFrame(columns=colunas)
 
 def salvar_csv(df, caminho):
@@ -80,8 +80,8 @@ if menu == "Lançamentos":
 
 if st.session_state["delete_index"] is not None:
     st.session_state["dados"] = st.session_state["dados"].drop(st.session_state["delete_index"]).reset_index(drop=True)
-    salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
-    st.success("Lançamento excluído com sucesso.")
+                salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
+                st.success("Lançamento adicionado com sucesso!")
     st.session_state["delete_index"] = None
 
     if st.session_state["edit_index"] is None:
@@ -100,9 +100,9 @@ if st.session_state["delete_index"] is not None:
                 novo = pd.DataFrame([[data, tipo, categoria, descricao, valor]],
                                     columns=["Data", "Tipo", "Categoria", "Descrição", "Valor"])
                 st.session_state["dados"] = pd.concat([st.session_state["dados"], novo], ignore_index=True)
-    salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
-    st.success("Lançamento excluído com sucesso.")
-    else:
+                salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
+                st.success("Lançamento adicionado com sucesso!")
+if st.session_state.get("editando", False):
         st.subheader("✏️ Editar Lançamento")
         dados = st.session_state["dados"]
         row = dados.loc[st.session_state["edit_index"]]
@@ -120,8 +120,8 @@ if st.session_state["delete_index"] is not None:
 
             if atualizar:
                 st.session_state["dados"].loc[st.session_state["edit_index"]] = [data, tipo, categoria, descricao, valor]
-    salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
-    st.success("Lançamento excluído com sucesso.")
+                salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
+                st.success("Lançamento adicionado com sucesso!")
                 st.session_state["edit_index"] = None
 
     st.subheader("📄 Lista de Lançamentos")
@@ -144,7 +144,7 @@ if st.session_state["delete_index"] is not None:
     contas = st.session_state["contas"]
     if dados.empty:
         st.info("Nenhum dado disponível.")
-    else:
+if st.session_state.get("editando", False):
         dados["Data"] = pd.to_datetime(dados["Data"])
         dados["AnoMes"] = dados["Data"].dt.to_period("M").astype(str)
 
@@ -187,7 +187,7 @@ if st.session_state["delete_index"] is not None:
             ax.pie(categoria_data, labels=categoria_data.index, autopct='%1.1f%%', startangle=90)
             ax.axis('equal')
             st.pyplot(fig)
-        else:
+if st.session_state.get("editando", False):
             st.info("Nenhuma despesa para exibir no gráfico.")
 elif menu == "Agenda":
     st.title("📅 Agenda: Contas Futuras e Tarefas")
@@ -212,8 +212,8 @@ elif menu == "Agenda":
                     hoje_lanc = lanc.copy()
                     hoje_lanc["Data"] = hoje
                     st.session_state["dados"] = pd.concat([st.session_state["dados"], pd.DataFrame([hoje_lanc])], ignore_index=True)
-    salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
-    st.success("Lançamento excluído com sucesso.")
+                salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
+                st.success("Lançamento adicionado com sucesso!")
 
     mostrar_lista(vencidas, "Atrasadas", "red")
     mostrar_lista(vencem_hoje, "Vencem Hoje", "orange")
@@ -285,5 +285,5 @@ st.subheader("✏️ Editar Saldo das Contas")
     st.success("Saldos atualizados com sucesso!")
 
         st.dataframe(st.session_state["contas"], use_container_width=True)
-    else:
+if st.session_state.get("editando", False):
         st.info("Nenhuma conta cadastrada.")
