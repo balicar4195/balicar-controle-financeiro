@@ -84,9 +84,6 @@ if st.session_state["delete_index"] is not None:
     salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
     st.success("Lançamento excluído com sucesso.")
     st.session_state["delete_index"] = None
-salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
-st.success("Lançamento excluído com sucesso.")
-        st.session_state["delete_index"] = None
 
     if st.session_state["edit_index"] is None:
         with st.form("form_lancamento"):
