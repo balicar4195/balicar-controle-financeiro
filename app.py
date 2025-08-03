@@ -7,7 +7,6 @@ import hashlib
 import os
 
 st.set_page_config(page_title="BALICAR - Controle Financeiro", layout="wide")
-st.image("logo.png", width=200)
 
 # ------------------------
 # Autenticação
