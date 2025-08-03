@@ -62,7 +62,7 @@ if "tarefas" not in st.session_state:
 if "edit_index" not in st.session_state:
     st.session_state["edit_index"] = None
 if "delete_index" not in st.session_state:
-    st.session_state["delete_index"] = None
+        st.session_state["delete_index"] = None
 
 # ------------------------
 # Menu lateral
@@ -80,9 +80,9 @@ if menu == "Lançamentos":
 
 if st.session_state["delete_index"] is not None:
     st.session_state["dados"] = st.session_state["dados"].drop(st.session_state["delete_index"]).reset_index(drop=True)
-                salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
+        salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
                 st.success("Lançamento adicionado com sucesso!")
-    st.session_state["delete_index"] = None
+        st.session_state["delete_index"] = None
 
     if st.session_state["edit_index"] is None:
         with st.form("form_lancamento"):
@@ -100,7 +100,7 @@ if st.session_state["delete_index"] is not None:
                 novo = pd.DataFrame([[data, tipo, categoria, descricao, valor]],
                                     columns=["Data", "Tipo", "Categoria", "Descrição", "Valor"])
                 st.session_state["dados"] = pd.concat([st.session_state["dados"], novo], ignore_index=True)
-                salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
+        salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
                 st.success("Lançamento adicionado com sucesso!")
 if st.session_state.get("editando", False):
         st.subheader("✏️ Editar Lançamento")
@@ -120,7 +120,7 @@ if st.session_state.get("editando", False):
 
             if atualizar:
                 st.session_state["dados"].loc[st.session_state["edit_index"]] = [data, tipo, categoria, descricao, valor]
-                salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
+        salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
                 st.success("Lançamento adicionado com sucesso!")
                 st.session_state["edit_index"] = None
 
@@ -212,7 +212,7 @@ elif menu == "Agenda":
                     hoje_lanc = lanc.copy()
                     hoje_lanc["Data"] = hoje
                     st.session_state["dados"] = pd.concat([st.session_state["dados"], pd.DataFrame([hoje_lanc])], ignore_index=True)
-                salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
+        salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
                 st.success("Lançamento adicionado com sucesso!")
 
     mostrar_lista(vencidas, "Atrasadas", "red")
