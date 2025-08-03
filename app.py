@@ -127,6 +127,56 @@ def main_app():
                         st.success("Lançamento editado com sucesso!")
                         st.experimental_rerun()
 
+    
+    elif menu == "Contas Bancárias":
+        st.header("🏦 Contas Bancárias")
+
+        CSV_CONTAS = "contas.csv"
+
+        def carregar_contas():
+            if os.path.exists(CSV_CONTAS):
+                return pd.read_csv(CSV_CONTAS)
+            else:
+                return pd.DataFrame(columns=["Nome", "Saldo"])
+
+        def salvar_contas(df):
+            df.to_csv(CSV_CONTAS, index=False)
+
+        contas_df = carregar_contas()
+
+        st.subheader("➕ Adicionar Nova Conta")
+        with st.form("nova_conta"):
+            nome_conta = st.text_input("Nome da Conta")
+            saldo_inicial = st.number_input("Saldo Inicial", step=0.01, format="%.2f")
+            adicionar = st.form_submit_button("Salvar Conta")
+            if adicionar and nome_conta:
+                nova = {"Nome": nome_conta, "Saldo": saldo_inicial}
+                contas_df = pd.concat([contas_df, pd.DataFrame([nova])], ignore_index=True)
+                salvar_contas(contas_df)
+                st.success("Conta salva com sucesso!")
+                st.experimental_rerun()
+
+        st.subheader("📋 Contas Cadastradas")
+        if not contas_df.empty:
+            for i in contas_df.index:
+                with st.expander(f"{contas_df.at[i, 'Nome']} - R$ {contas_df.at[i, 'Saldo']}"):
+                    novo_nome = st.text_input(f"Editar Nome - {i}", contas_df.at[i, "Nome"], key=f"nome_{i}")
+                    novo_saldo = st.number_input(f"Editar Saldo - {i}", value=float(contas_df.at[i, "Saldo"]), step=0.01, format="%.2f", key=f"saldo_{i}")
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        if st.button("💾 Salvar Alterações", key=f"salvar_conta_{i}"):
+                            contas_df.at[i, "Nome"] = novo_nome
+                            contas_df.at[i, "Saldo"] = novo_saldo
+                            salvar_contas(contas_df)
+                            st.success("Conta atualizada.")
+                            st.experimental_rerun()
+                    with col2:
+                        if st.button("🗑️ Excluir Conta", key=f"excluir_conta_{i}"):
+                            contas_df = contas_df.drop(i).reset_index(drop=True)
+                            salvar_contas(contas_df)
+                            st.warning("Conta excluída.")
+                            st.experimental_rerun()
+
     else:
         st.info(f"A seção '{menu}' será implementada em breve.")
 
