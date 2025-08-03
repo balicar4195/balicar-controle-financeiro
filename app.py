@@ -31,7 +31,7 @@ def login_screen():
     if st.button("Entrar"):
         if check_login(user, passwd):
             st.session_state["logado"] = True
-            st.experimental_rerun()
+            # st.experimental_rerun() removido por segurança
         else:
             st.error("Usuário ou senha incorretos.")
 
@@ -75,7 +75,7 @@ def main_app():
                 df = pd.concat([df, pd.DataFrame([novo])], ignore_index=True)
                 salvar_csv(df)
                 st.success("Lançamento salvo com sucesso!")
-                st.experimental_rerun()
+                # st.experimental_rerun() removido por segurança
 
         st.subheader("📋 Lançamentos Salvos")
 
@@ -94,7 +94,7 @@ def main_app():
                         if st.button("🗑️ Excluir", key=f"excluir_{i}"):
                             df = df.drop(i).reset_index(drop=True)
                             salvar_csv(df)
-                            st.experimental_rerun()
+                            # st.experimental_rerun() removido por segurança
 
             # Edição
             if "edit_index" in st.session_state:
@@ -125,7 +125,7 @@ def main_app():
                         salvar_csv(df)
                         del st.session_state["edit_index"]
                         st.success("Lançamento editado com sucesso!")
-                        st.experimental_rerun()
+                        # st.experimental_rerun() removido por segurança
 
     
     elif menu == "Contas Bancárias":
@@ -154,7 +154,7 @@ def main_app():
                 contas_df = pd.concat([contas_df, pd.DataFrame([nova])], ignore_index=True)
                 salvar_contas(contas_df)
                 st.success("Conta salva com sucesso!")
-                st.experimental_rerun()
+                # st.experimental_rerun() removido por segurança
 
         st.subheader("📋 Contas Cadastradas")
         if not contas_df.empty:
@@ -169,13 +169,13 @@ def main_app():
                             contas_df.at[i, "Saldo"] = novo_saldo
                             salvar_contas(contas_df)
                             st.success("Conta atualizada.")
-                            st.experimental_rerun()
+                            # st.experimental_rerun() removido por segurança
                     with col2:
                         if st.button("🗑️ Excluir Conta", key=f"excluir_conta_{i}"):
                             contas_df = contas_df.drop(i).reset_index(drop=True)
                             salvar_contas(contas_df)
                             st.warning("Conta excluída.")
-                            st.experimental_rerun()
+                            # st.experimental_rerun() removido por segurança
 
     else:
         st.info(f"A seção '{menu}' será implementada em breve.")
