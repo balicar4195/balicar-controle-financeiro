@@ -112,7 +112,7 @@ salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
             with col1:
                 tipo = st.selectbox("Tipo", ["Receita", "Despesa"], index=["Receita", "Despesa"].index(row["Tipo"]))
                 categoria = st.selectbox("Categoria", ["Venda", "Salário", "Investimento", "Aluguel", "Manutenção", "Outros"],
-                                         index=["Venda", "Salário", "Investimento", "Aluguel", "Manutenção", "Outros"].index(row["Categoria"]))
+                                        index=["Venda", "Salário", "Investimento", "Aluguel", "Manutenção", "Outros"].index(row["Categoria"]))
             with col2:
                 data = st.date_input("Data", value=pd.to_datetime(row["Data"]))
                 valor = st.number_input("Valor", value=float(row["Valor"]), min_value=0.0, step=0.01)
