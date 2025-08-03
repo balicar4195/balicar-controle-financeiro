@@ -72,7 +72,7 @@ def main_app():
                     "Conta Bancária": conta,
                     "Observação": observacao
                 }
-                df = df.append(novo, ignore_index=True)
+                df = pd.concat([df, pd.DataFrame([novo])], ignore_index=True)
                 salvar_csv(df)
                 st.success("Lançamento salvo com sucesso!")
                 st.experimental_rerun()
