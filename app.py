@@ -24,7 +24,7 @@ def login_screen():
 # Interface principal com menu lateral
 def main_app():
     logo = Image.open("logo.png")
-    st.sidebar.image(logo, use_column_width=True)
+    st.sidebar.image(logo, use_container_width=True)
     menu = st.sidebar.radio("Menu", ["Lançamentos", "Agenda", "Relatórios", "Gráficos", "Contas Bancárias"])
 
     st.title("Sistema de Controle Financeiro - BALICAR")
