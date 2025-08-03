@@ -84,7 +84,6 @@ if st.session_state["delete_index"] is not None:
     salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
     st.success("Lançamento excluído com sucesso.")
     st.session_state["delete_index"] = None
-        st.session_state["dados"] = st.session_state["dados"].drop(st.session_state["delete_index"]).reset_index(drop=True)
 salvar_csv(st.session_state["dados"], CSV_LANCAMENTOS)
 st.success("Lançamento excluído com sucesso.")
         st.session_state["delete_index"] = None
