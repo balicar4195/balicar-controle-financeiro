@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 import os
@@ -42,7 +43,8 @@ with st.form("form_nova_agenda"):
         st.success("Item adicionado com sucesso!")
         st.rerun()
 
-# Mostrar tarefas de hoje
+# Corrigir datas inválidas e mostrar tarefas de hoje
+agenda_df["Data"] = pd.to_datetime(agenda_df["Data"], errors="coerce")
 st.subheader("📌 Tarefas para Hoje")
 hoje = pd.to_datetime(date.today())
 agenda_hoje = agenda_df[agenda_df["Data"].dt.date == hoje.date()]
