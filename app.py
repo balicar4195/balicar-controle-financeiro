@@ -181,3 +181,65 @@ elif opcao == "📅 Agenda":
                         salvar_csv(agenda, CSV_AGENDA)
                         st.success("Excluído.")
                         st.rerun()
+
+
+    st.subheader("✏️ Editar / Excluir Lançamentos")
+    for i, row in lancamentos.sort_values("Data").iterrows():
+        with st.expander(f"{row['Data'].date()} - {row['Tipo']} - {row['Descrição']}"):
+            with st.form(f"form_edit_{i}"):
+                nova_data = st.date_input("Data", value=row["Data"].date(), key=f"data_{i}")
+                novo_tipo = st.selectbox("Tipo", ["Receita", "Despesa"], index=["Receita", "Despesa"].index(row["Tipo"]), key=f"tipo_{i}")
+                nova_categoria = st.text_input("Categoria", value=row["Categoria"], key=f"cat_{i}")
+                nova_desc = st.text_input("Descrição", value=row["Descrição"], key=f"desc_{i}")
+                novo_valor = st.number_input("Valor", value=row["Valor"], min_value=0.0, step=0.01, key=f"val_{i}")
+                col1, col2 = st.columns(2)
+                with col1:
+                    if st.form_submit_button("Salvar edição"):
+                        lancamentos.at[i, "Data"] = pd.to_datetime(nova_data)
+                        lancamentos.at[i, "Tipo"] = novo_tipo
+                        lancamentos.at[i, "Categoria"] = nova_categoria
+                        lancamentos.at[i, "Descrição"] = nova_desc
+                        lancamentos.at[i, "Valor"] = novo_valor
+                        salvar_csv(lancamentos, CSV_LANCAMENTOS)
+                        st.success("Lançamento atualizado.")
+                        st.rerun()
+                with col2:
+                    if st.form_submit_button("🗑 Excluir"):
+                        lancamentos = lancamentos.drop(i)
+                        lancamentos.reset_index(drop=True, inplace=True)
+                        salvar_csv(lancamentos, CSV_LANCAMENTOS)
+                        st.success("Lançamento excluído.")
+                        st.rerun()
+
+
+elif opcao == "💰 Contas":
+    st.title("💰 Contas Bancárias")
+    with st.form("nova_conta"):
+        nome_conta = st.text_input("Nome da Conta")
+        saldo = st.number_input("Saldo Inicial", step=0.01)
+        if st.form_submit_button("Adicionar Conta") and nome_conta:
+            contas = pd.concat([contas, pd.DataFrame([{"Conta": nome_conta, "Saldo": saldo}])], ignore_index=True)
+            salvar_csv(contas, CSV_CONTAS)
+            st.success("Conta adicionada com sucesso.")
+            st.rerun()
+
+    st.subheader("Editar Saldos")
+    for i, row in contas.iterrows():
+        with st.form(f"edit_conta_{i}"):
+            nova_conta = st.text_input("Conta", value=row["Conta"], key=f"conta_{i}")
+            novo_saldo = st.number_input("Saldo", value=row["Saldo"], step=0.01, key=f"saldo_{i}")
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.form_submit_button("Salvar"):
+                    contas.at[i, "Conta"] = nova_conta
+                    contas.at[i, "Saldo"] = novo_saldo
+                    salvar_csv(contas, CSV_CONTAS)
+                    st.success("Conta atualizada.")
+                    st.rerun()
+            with col2:
+                if st.form_submit_button("🗑 Excluir"):
+                    contas = contas.drop(i)
+                    contas.reset_index(drop=True, inplace=True)
+                    salvar_csv(contas, CSV_CONTAS)
+                    st.success("Conta excluída.")
+                    st.rerun()
